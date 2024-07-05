@@ -213,7 +213,7 @@ export default function Page() {
 >
 > 模板在进行路由切换时，会为每一个children创建一个实例。这就意味着**当用户在共享一个模板的路由间跳转时，会重新挂在组件实例，重新创建DOM元素，从而不保留状态。**
 
-`template`用法跟布局一模一样。它们最大的区别就是状态的保持。如果同一目录下既有 `template.js` 也有 `layout.js`，最后的输出效果如下：也就是说 `layout` 会包裹 `template`，`template` 又会包裹 `page`。
+`template.js`用法跟布局一模一样。它们最大的区别就是状态的保持。如果同一目录下既有 `template.js` 也有 `layout.js`，最后的输出效果如下：也就是说 `layout` 会包裹 `template`，`template` 又会包裹 `page`。
 
 ```tsx
 <Layout>
@@ -230,3 +230,28 @@ export default function Page() {
 #### 5.模板`（template）`VS布局`（layout）`
 
 [对比示例](https://juejin.cn/book/7307859898316881957/section/7308681814742417434#heading-10 )
+
+#### 6.定义加载界面
+
+> `loading.js`用于展示加载界面，该功能实现借助了React的`Suspense`API
+
+```tsx
+// 在 ProfilePage 组件处于加载阶段时显示 Spinner
+<Suspense fallback={<Spinner />}>
+  <ProfilePage />
+</Suspense>
+```
+
+`ProfilePage`组件会抛出一个数据加载的`Promise`，`Suspense`会捕获这个`Promise`,成功状态则会更新替换fallbackUI为`ProfilePage`组件
+
+#### 7.定义错误处理
+
+因为 `Layout` 和 `Template` 在 `ErrorBoundary` 外面，这说明错误边界不能捕获同级的 `layout.js` 或者 `template.js` 中的错误。如果你想捕获特定布局或者模板中的错误，那就需要在父级的 `error.js` 里进行捕获。
+
+如果已经到了顶层，就比如根布局中的错误如何捕获呢？为了解决这个问题，Next.js 提供了 `global-error.js`文件，使用它时，需要将其放在 `app` 目录下。
+
+##### 层级问题
+
+![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/eeb2e4b635f0473785c0ba9d79df01b6~tplv-k3u1fbpfcp-jj-mark:1890:0:0:0:q75.awebp#?w=1600&h=641&s=327102&e=png&b=1c1c1c)
+
+#### 8.定义404界面
